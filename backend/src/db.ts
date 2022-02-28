@@ -17,6 +17,4 @@ const db = new sqlite3.Database(":memory", (err: Error) => {
   console.log("db connected...");
 });
 
-// db.close();
-
 export default db;

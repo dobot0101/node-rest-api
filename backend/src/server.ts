@@ -1,80 +1,50 @@
 import express, { NextFunction, Request, Response } from "express";
-import db from "./db";
-import TodoManager from "./classes/todoManager";
+import bodyParser from "body-parser";
+import MemoryTodoManager from "./classes/MemoryTodoManager";
 
-const todoManager = new TodoManager(db);
-
-function init() {
-  db.run(
-    `create table if not exists todo (id integer primary key autoincrement, task text not null)`,
-    function (err: any) {
-      if (err) console.log(err);
-      console.log("table is created");
-    }
-  );
-
-  todoManager.saveTodo("test task", () => {
-    console.log("test data inserted.");
-  });
-}
-
-init();
+const todoManager = new MemoryTodoManager();
 
 const app = express();
 const port = 3000;
 
-function requestTime(req: Request, res: Response, next: NextFunction) {
+app.use((req: Request, res: Response, next: NextFunction) => {
   console.log(`request url: ${req.url}`);
   console.log(`request Time: ${Date.now()}`);
   next();
-}
-app.use(requestTime);
+});
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.get("/", (req: Request, res: Response) => {
   res.send("hello world");
 });
 
 app.get("/list", (req: Request, res: Response) => {
-  const todos = todoManager.findTodoList();
-  res.send(todos);
-  // console.log(todos);
+  const todoList = todoManager.find();
+  res.send({ todoList });
 });
 
 app.post("/addTask", (req: Request, res: Response) => {
-  console.log('123123123123');
-  console.log(req.body);
   const task = req.body.task;
   if (!task) {
     throw new Error("task is required.");
   }
-  todoManager.saveTodo(task, () => {
-    console.log("saved.");
-  });
-  res.send({ result: true });
+
+  const todo = todoManager.save(task);
+  // console.log(todo);
+  res.send({ result: true, savedTodo: todo });
 });
 
 app.post("/removeTask", (req: Request, res: Response) => {
-  todoManager.deleteTodo(req.body.id, () => {
-    console.log("deleted.");
-  });
-
-  res.send({ result: true, deletedId: req.body.id });
+  const result = todoManager.delete(req.body.id);
+  res.send({ result, deletedId: req.body.id });
 });
 
-// app
-//   .route('/todo')
-//   .get((req: Request, res: Response) => {
-//     console.log(`todo list`);
-//   })
-//   .post((req: Request, res: Response) => {
-//     res.send('add todo');
-//   })
-//   .delete((req: Request, res: Response) => {
-//     res.send('delete todo');
-//   });
+app.post("/updateTask", (req: Request, res: Response) => {
+  const todo = todoManager.update(req.body.id, req.body.task);
+  res.send({ result: true, updatedTodo: todo });
+});
 
 app.listen(port, () => {
   console.log(`app listening on port ${port}`);
 });
-
-db.close();
