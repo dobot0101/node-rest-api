@@ -17,7 +17,7 @@ export default class TodoManager {
       { $task: task },
       function (err: Error) {
         if (err) console.error(err);
-        else if (callback && typeof callback === "function") callback();
+        else if (callback && typeof callback === 'function') callback();
       }
     );
   }
