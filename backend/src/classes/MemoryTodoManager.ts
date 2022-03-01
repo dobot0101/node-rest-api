@@ -1,4 +1,4 @@
-import { ITodoManager, Todo } from "./ITodoManager";
+import { ITodoManager, Todo } from './ITodoManager';
 
 export default class MemoryTodoManager implements ITodoManager {
   private todoList: Todo[] = [];
@@ -6,7 +6,7 @@ export default class MemoryTodoManager implements ITodoManager {
   save(task: string): Todo {
     const id = this.todoList.length;
     this.todoList.push({ id, task });
-    return this.todoList.filter((todo) => (todo.id = id))[0];
+    return this.todoList.filter(todo => todo.id === id)[0];
   }
 
   find(): Todo[] {
@@ -14,12 +14,13 @@ export default class MemoryTodoManager implements ITodoManager {
   }
 
   delete(id: number): boolean {
-    this.todoList = this.todoList.filter((todo) => todo.id !== id);
+    this.todoList = this.todoList.filter(todo => todo.id !== id);
     console.log(this.todoList);
     return true;
   }
+
   update(id: number, task: string): Todo {
-    const idx = this.todoList.findIndex((todo) => todo.id === id);
+    const idx = this.todoList.findIndex(todo => todo.id === id);
     const todo = this.todoList[idx];
     console.log(`before update: ${this.todoList}`);
     todo.task = task;
