@@ -15,16 +15,16 @@ export default class MemoryTodoManager implements ITodoManager {
 
   delete(id: number): boolean {
     this.todoList = this.todoList.filter(todo => todo.id !== id);
-    console.log(this.todoList);
     return true;
   }
 
   update(id: number, task: string): Todo {
     const idx = this.todoList.findIndex(todo => todo.id === id);
+    if (idx === -1) {
+      throw new Error(`todo isn't exist(id: ${id})`);
+    }
     const todo = this.todoList[idx];
-    console.log(`before update: ${this.todoList}`);
     todo.task = task;
-    console.log(`after update: ${this.todoList}`);
     return todo;
   }
 }
