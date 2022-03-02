@@ -1,10 +1,13 @@
 import * as express from 'express';
 import { Request, Response } from 'express';
-import MemoryTodoManager from '../classes/MemoryTodoManager';
+import { createConnection } from 'typeorm';
+import DBTodoManager from '../classes/DBTodoManager';
+// import MemoryTodoManager from '../classes/MemoryTodoManager';
 
 const router = express.Router();
 
-const todoManager = new MemoryTodoManager();
+// const todoManager = new MemoryTodoManager();
+const todoManager = new DBTodoManager();
 
 /**
  * todo 목록 조회
