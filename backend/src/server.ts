@@ -1,5 +1,8 @@
-import express, { NextFunction, Request, Response } from 'express';
+// import express, { NextFunction, Request, Response } from 'express';
+import * as express from 'express';
 import { todoRouter } from './routes/todo';
+import 'reflect-metadata';
+import { NextFunction, Request, Response } from 'express';
 
 const port = process.env.PORT || 3000;
 const app = express();
