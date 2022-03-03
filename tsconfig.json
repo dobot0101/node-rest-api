@@ -5,7 +5,10 @@
         "outDir": "dist",
         "strict": true,
         "moduleResolution": "node",
-        "esModuleInterop":true
+        "esModuleInterop":true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        // "lib": ["ES6"]
     },
     "exclude": [
         "node_modules"
