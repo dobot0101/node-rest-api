@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { Request, Response } from 'express';
-import { createConnection, getConnection } from 'typeorm';
+import { createConnection } from 'typeorm';
 import DBTodoManager from '../classes/DBTodoManager';
 import { Todo } from '../entity/Todo';
 // import MemoryTodoManager from '../classes/MemoryTodoManager';
@@ -9,6 +9,8 @@ const router = express.Router();
 
 // const todoManager = new MemoryTodoManager();
 async function main() {
+  console.log(`main.ts`);
+
   const connection = await createConnection();
   const todoRepository = connection.getRepository(Todo);
   const todoManager = new DBTodoManager(todoRepository);
@@ -33,10 +35,6 @@ async function main() {
 
       const todo = await todoManager.save(task);
       res.send({ result: true, savedTodo: todo });
-      
-      // todoManager.save(task).then(todo => {
-      //   res.send({ result: true, savedTodo: todo });
-      // });
     } catch (error) {
       if (error instanceof Error) {
         res.send({ result: false, message: error.message });
@@ -47,17 +45,21 @@ async function main() {
   /**
    * todo 삭제
    */
-  router.post('/removeTask', (req: Request, res: Response) => {
-    const result = todoManager.delete(req.body.id);
-    res.send({ result });
+  router.post('/removeTask', async (req: Request, res: Response) => {
+    try {
+      const result = todoManager.delete(req.body.id);
+      res.send({ result });
+    } catch (error) {
+      console.log(error.message);
+    }
   });
 
   /**
    * todo 업데이트
    */
-  router.post('/updateTask', (req: Request, res: Response) => {
+  router.post('/updateTask', async (req: Request, res: Response) => {
     try {
-      const todo = todoManager.update(req.body.id, req.body.task);
+      const todo = await todoManager.update(req.body.id, req.body.task);
       res.send({ result: true, updatedTodo: todo });
     } catch (error) {
       if (error instanceof Error) {
