@@ -30,6 +30,10 @@ describe('todo typeorm CRUD test', () => {
 
   test('update todo test', async () => {
     const todo = await todoRepo.findOne();
+    if (!todo) {
+      console.error(`todo isn't exist`);
+      return;
+    }
     const prevTask = todo.task;
     todo.task = 'new task';
     const updatedTodo = await todoRepo.save(todo);

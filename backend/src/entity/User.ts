@@ -5,12 +5,18 @@ export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
-  firstName!: string;
+  @Column('varchar', { length: 20 })
+  name!: string;
 
-  @Column()
-  lastName!: string;
+  @Column('varchar', { length: 40 })
+  email!: string;
 
-  @Column()
-  age!: number;
+  @Column('varchar', { length: 20 })
+  password!: string;
+
+  @Column('varchar', { length: 11 })
+  phoneNumber!: string;
+
+  @Column('datetime', { default: () => 'CURRENT_TIMESTAMP' })
+  createdAt!: string;
 }

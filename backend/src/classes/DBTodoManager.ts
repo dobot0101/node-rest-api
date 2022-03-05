@@ -1,30 +1,37 @@
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { Todo as TodoEntity } from '../entity/Todo';
-import { IAsyncTodoManager, Todo } from './IAsyncTodoManager';
 
-export default class DBTodoManager implements IAsyncTodoManager {
-  private todoRepository: Repository<Todo>;
+type Todo = {
+  id: number;
+  task: string;
+};
+export default class DBTodoManager {
+  private todoRepository;
   constructor(todoRepository: Repository<Todo>) {
     this.todoRepository = todoRepository;
   }
 
-  async save(task: string): Promise<Todo> {
+  async addTask(task: string): Promise<Todo> {
     const todo = new TodoEntity();
     todo.task = task;
     return await this.todoRepository.save(todo);
   }
 
-  async find(): Promise<Todo[]> {
+  async findAllTask(): Promise<Todo[]> {
     return await this.todoRepository.find();
   }
 
-  async delete(id: number): Promise<boolean> {
+  async removeTask(id: number): Promise<boolean> {
     const result = await this.todoRepository.delete(id);
-    return result.affected >= 0;
+    console.log(result);
+    return true;
   }
 
-  async update(id: number, task: string): Promise<Todo> {
+  async updateTask(id: number, task: string): Promise<Todo> {
     const todo = await this.todoRepository.findOne(id);
+    if (!todo) {
+      throw new Error(`todo isn't exist`);
+    }
     todo.task = task;
     return await this.todoRepository.save(todo);
   }
