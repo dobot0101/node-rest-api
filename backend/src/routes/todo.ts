@@ -1,17 +1,16 @@
 import * as express from 'express';
 import { Request, Response } from 'express';
-import { getConnection } from 'typeorm';
+import { getRepository } from 'typeorm';
 import DBTodoManager from '../classes/DBTodoManager';
 import { Todo } from '../entity/Todo';
 
-const connection = getConnection();
 const router = express.Router();
-const todoRepository = connection.getRepository(Todo);
-const todoManager = new DBTodoManager(todoRepository);
 
-router.get('/list', (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
-    const todoList = todoManager.find();
+    const todoManager = new DBTodoManager(getRepository(Todo));
+    const todoList = await todoManager.findAllTask();
+
     res.send({ todoList });
   } catch (error) {
     res.status(500).send({ error: 'internal error' });
@@ -19,14 +18,15 @@ router.get('/list', (req: Request, res: Response) => {
   }
 });
 
-router.post('/addTask', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
   try {
     const task = req.body.task;
     if (!task) {
       throw new Error('input task.');
     }
 
-    const todo = await todoManager.save(task);
+    const todoManager = new DBTodoManager(getRepository(Todo));
+    const todo = await todoManager.addTask(task);
     res.send({ result: true, savedTodo: todo });
   } catch (error) {
     if (error instanceof Error) {
@@ -36,19 +36,27 @@ router.post('/addTask', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/removeTask', async (req: Request, res: Response) => {
+router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const result = todoManager.delete(req.body.id);
+    const id = req.params.id;
+    if (!id) {
+      res.status(400).send({ message: `input id` });
+      console.log(`input id`);
+    }
+
+    const todoManager = new DBTodoManager(getRepository(Todo));
+    const result = await todoManager.removeTask(id);
     res.send({ result });
   } catch (error) {
-    res.status(500).send({ error: `internal error` });
+    // res.status(500).send({ error: `internal error` });
     if (error instanceof Error) console.log(error.message);
   }
 });
 
-router.post('/updateTask', async (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response) => {
   try {
-    const todo = await todoManager.update(req.body.id, req.body.task);
+    const todoManager = new DBTodoManager(getRepository(Todo));
+    const todo = await todoManager.updateTask(req.params.id, req.body.task);
     res.send({ result: true, updatedTodo: todo });
   } catch (error) {
     res.status(500).json({ error: `internal error` });

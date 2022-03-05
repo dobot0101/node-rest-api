@@ -1,6 +1,7 @@
-import { getRepository, Repository } from 'typeorm';
-import { serialize } from 'v8';
+import { Repository } from 'typeorm';
 import { User } from '../entity/User';
+import { UserCreateDto } from '../models/user.create.dto';
+import { UserUpdateDto } from '../models/user.update.dto';
 
 export default class UserManager {
   private userRepo;
@@ -9,7 +10,8 @@ export default class UserManager {
   }
 
   async findAllUsers(): Promise<User[]> {
-    return await this.userRepo.find();
+    const users = await this.userRepo.find();
+    return users;
   }
 
   async findById(id: string): Promise<User> {
@@ -42,12 +44,12 @@ export default class UserManager {
     return await this.userRepo.save(user);
   }
 
-  async signOut(id: number): Promise<number> {
+  async signOut(id: string): Promise<string> {
     await this.userRepo.delete(id);
     return id;
   }
 
-  async updateUser(id: number, userInput: UserUpdateDto) {
+  async updateUserInfo(id: string, userInput: UserUpdateDto) {
     const user = await this.userRepo.findOne(id);
     if (!user) {
       throw new Error(`user isn't exist`);

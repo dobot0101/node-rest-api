@@ -21,13 +21,12 @@ export default class DBTodoManager {
     return await this.todoRepository.find();
   }
 
-  async removeTask(id: number): Promise<boolean> {
-    const result = await this.todoRepository.delete(id);
-    console.log(result);
-    return true;
+  async removeTask(id: string): Promise<string> {
+    await this.todoRepository.delete(id);
+    return id;
   }
 
-  async updateTask(id: number, task: string): Promise<Todo> {
+  async updateTask(id: string, task: string): Promise<Todo> {
     const todo = await this.todoRepository.findOne(id);
     if (!todo) {
       throw new Error(`todo isn't exist`);

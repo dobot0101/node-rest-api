@@ -28,4 +28,4 @@ async function main() {
   });
 }
 
-main().catch(console.log).finally(process.exit);
+main().catch(console.log);
