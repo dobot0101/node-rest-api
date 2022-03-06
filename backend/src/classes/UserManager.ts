@@ -14,18 +14,22 @@ export default class UserManager {
     return users;
   }
 
-  async findById(id: string): Promise<User> {
+  async findById(id: number): Promise<User | null> {
     const user = await this.userRepo.findOne(id);
     if (!user) {
-      throw new Error(`id: ${id} user isn't exist`);
+      console.log(`id: ${id} user isn't exist`);
+      return null;
     }
+    // if (!user) {
+    //   throw new Error(`id: ${id} user isn't exist`);
+    // }
     return user;
   }
 
-  async login(id: string, password: string): Promise<User> {
+  async login(email: string, password: string): Promise<User> {
     const user = await this.userRepo.findOne({
       where: {
-        id,
+        email,
         password,
       },
     });
@@ -44,12 +48,12 @@ export default class UserManager {
     return await this.userRepo.save(user);
   }
 
-  async signOut(id: string): Promise<string> {
+  async signOut(id: number): Promise<number> {
     await this.userRepo.delete(id);
     return id;
   }
 
-  async updateUserInfo(id: string, userInput: UserUpdateDto) {
+  async updateUserInfo(id: number, userInput: UserUpdateDto): Promise<User> {
     const user = await this.userRepo.findOne(id);
     if (!user) {
       throw new Error(`user isn't exist`);

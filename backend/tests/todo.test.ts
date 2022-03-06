@@ -35,10 +35,11 @@ describe('todo typeorm CRUD test', () => {
       return;
     }
     const prevTask = todo.task;
-    todo.task = 'new task';
+    todo.task = 'new ' + prevTask;
+
     const updatedTodo = await todoRepo.save(todo);
 
-    expect(prevTask).not.toBe(updatedTodo.task);
+    expect(prevTask).not.toEqual(updatedTodo.task);
   });
 
   test('delete todo test', async () => {

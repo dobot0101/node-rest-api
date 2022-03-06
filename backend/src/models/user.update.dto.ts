@@ -1,5 +1,5 @@
 export class UserUpdateDto {
-  id!: number;
+  // id!: number;
   name?: string;
   email?: string;
   password?: string;
