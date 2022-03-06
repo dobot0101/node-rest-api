@@ -45,7 +45,7 @@ router.put('/:id', async (req: Request, res: Response) => {
   try {
     const userManager = new UserManager(getRepository(User));
     const id = req.params.id;
-    const user = await userManager.updateUser(id, req.body);
+    const user = await userManager.updateUserInfo(id, req.body);
     res.status(200).send({ user });
   } catch (error) {
     res.status(500).send({ error: 'internal error' });
@@ -57,7 +57,6 @@ router.delete('/:id', async (req: Request, res: Response) => {
   try {
     const userManager = new UserManager(getRepository(User));
     const deletedId = await userManager.signOut(req.params.id);
-    console.log(deletedId);
     res.status(200).send({ deletedId });
   } catch (error) {
     res.status(500).send({ error: 'internal error' });
