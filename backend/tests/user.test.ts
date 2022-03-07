@@ -2,7 +2,7 @@ import {
   Connection,
   createConnection,
   getConnection,
-  Repository,
+  getRepository,
 } from 'typeorm';
 import UserManager from '../src/classes/UserManager';
 import { User } from '../src/entity/User';
@@ -10,16 +10,13 @@ import { UserCreateDto } from '../src/models/user.create.dto';
 
 describe('user test', () => {
   let conn: Connection;
-  let userRepo: Repository<User>;
 
   beforeAll(async () => {
     conn = await createConnection();
-    userRepo = conn.getRepository(User);
   });
 
-
   test('login test', async () => {
-    const userManager = new UserManager(userRepo);
+    const userManager = new UserManager();
     const user: UserCreateDto = {
       email: 'test@naver.com1',
       name: '이도현',
@@ -28,12 +25,19 @@ describe('user test', () => {
     };
 
     const savedUser = await userManager.signUp(user);
-    const loginUser = await userManager.login(savedUser.email, savedUser.password);
+    const loginUser = await userManager.login(
+      savedUser.email,
+      savedUser.password
+    );
 
     expect(loginUser).toBeInstanceOf(User);
+
+    if (savedUser && savedUser instanceof User) {
+      await getRepository(User).remove(savedUser);
+    }
   });
   test('add user test', async () => {
-    const userManager = new UserManager(userRepo);
+    const userManager = new UserManager();
     const user: UserCreateDto = {
       email: 'test@naver.com2',
       name: '이도현',
@@ -43,16 +47,20 @@ describe('user test', () => {
     const savedUser = await userManager.signUp(user);
 
     expect(savedUser).toBeInstanceOf(User);
+
+    if (savedUser && savedUser instanceof User) {
+      await getRepository(User).remove(savedUser);
+    }
   });
 
   test('find all users test', async () => {
-    const userManager = new UserManager(userRepo);
+    const userManager = new UserManager();
     const users = await userManager.findAllUsers();
     expect(users.length).toBeGreaterThanOrEqual(0);
   });
 
   test('find user by id test', async () => {
-    const userManager = new UserManager(userRepo);
+    const userManager = new UserManager();
     const user: UserCreateDto = {
       email: 'test@naver.com3',
       name: '이도현',
@@ -66,13 +74,14 @@ describe('user test', () => {
   });
 
   test('update user test', async () => {
-    const userManager = new UserManager(userRepo);
+    const userManager = new UserManager();
     const savedUser = await userManager.signUp({
       email: 'test@naver.com4',
       name: '이도현',
       password: 'password',
       phoneNumber: '01071131111',
     });
+
     const id = savedUser.id;
     const updatedUser = await userManager.updateUserInfo(id, {
       email: 'test2@naver.com5',
@@ -85,7 +94,7 @@ describe('user test', () => {
   });
 
   test('delete user test', async () => {
-    const userManager = new UserManager(userRepo);
+    const userManager = new UserManager();
     const savedUser = await userManager.signUp({
       email: 'test@naver.com6',
       name: '이도현',
