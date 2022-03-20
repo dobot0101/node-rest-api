@@ -1,3 +1,6 @@
+### 설명
+- Node.js, express, Typescript, TypeORM 학습을 위한 간단한 Rest API
+
 ### 사용기술
 - Node.js, express, Typescript, TypeORM
 - MySQL
