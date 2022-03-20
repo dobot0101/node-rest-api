@@ -1,7 +1,15 @@
-# Awesome Project Build with TypeORM
+### 설명
+- Node.js, Express, Typescript, TypeORM을 사용한 REST API 개발 학습
 
-Steps to run this project:
+### 사용 기술
+- Node.js, Express, Typescript, TypeORM
+- MySQL
+- Jest
 
-1. Run `npm i` command
-2. Setup database settings inside `ormconfig.json` file
-3. Run `npm start` command
+### 환경설정
+1. `npm i` 실행
+2. `ormconfig.json` 파일을 확인하여 DB 설정
+3. `npm run server` 실행
+
+### 테스트
+`npm test`
